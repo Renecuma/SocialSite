@@ -28,8 +28,11 @@ Jednoduchá sociální síť: uživatelé sdílejí příspěvky, komentují, la
 
 > Admin nemůže měnit hash hesla uživatele.
 
-## Datový model
+## 🗄️ Datový model
 
+Struktura databáze je navržena pro potřeby sociální sítě, kde uživatelé tvoří obsah a vzájemně interagují.
+
+### ER Diagram
 ```mermaid
 erDiagram
     UserProfile ||--o{ Post : "píše"
@@ -41,13 +44,54 @@ erDiagram
     UserProfile ||--o{ Follow : "je sledován (Receiver)"
 ```
 
-| Entita | Atributy | Vztahy |
-|--------|----------|--------|
-| **UserProfile** | `Id`, `Name`, `DateOfBirth`, `Bio`, `ProfilePicturePath` | Posts 1:N, Comments 1:N, Likes 1:N |
-| **Post** | `Id`, `Content`, `CreatedAt`, `UpdatedAt`, `ImagePath`, `UserProfileId` | Comments 1:N, Likes 1:N |
-| **Comment** | `Id`, `Text`, `CreatedAt`, `PostId`, `UserProfileId` | Autor (UserProfile), Post |
-| **Like** | `Id`, `CreatedAt`, `PostId`, `UserProfileId` | UserProfile, Post |
-| **Follow** | `Id`, `SenderId`, `ReceiverId`, `CreatedAt` | Sender (UserProfile), Receiver (UserProfile) |
+### 👤 UserProfile (Profil uživatele)
+
+| Atribut | Datový typ | Omezení | Popis |
+| :--- | :--- | :--- | :--- |
+| `Id` | `UUID` / `Int` | Primary Key | Unikátní identifikátor profilu |
+| `Name` | `String` | Not Null | Zobrazované jméno uživatele |
+| `DateOfBirth`| `Date` | Not Null | Datum narození (slouží k validaci věku) |
+| `Bio` | `String` | Nullable | Krátký popisek (informace o uživateli) |
+| `ProfilePicturePath`| `String` | Nullable | Relativní cesta k nahrané profilové fotce |
+
+### 📝 Post (Příspěvek)
+
+| Atribut | Datový typ | Omezení | Popis |
+| :--- | :--- | :--- | :--- |
+| `Id` | `UUID` / `Int` | Primary Key | Unikátní identifikátor příspěvku |
+| `Content` | `String` | Not Null | Textový obsah příspěvku (validováno na zakázaná slova) |
+| `ImagePath` | `String` | Nullable | Relativní cesta k nahranému obrázku |
+| `CreatedAt` | `DateTime` | Auto-generated| Datum a čas vytvoření |
+| `UpdatedAt` | `DateTime` | Nullable | Datum a čas poslední úpravy |
+| `UserProfileId`| `UUID` / `Int` | Foreign Key | Autor příspěvku |
+
+### 💬 Comment (Komentář)
+
+| Atribut | Datový typ | Omezení | Popis |
+| :--- | :--- | :--- | :--- |
+| `Id` | `UUID` / `Int` | Primary Key | Unikátní identifikátor komentáře |
+| `Text` | `String` | Not Null | Obsah komentáře (validováno na zakázaná slova) |
+| `CreatedAt` | `DateTime` | Auto-generated| Datum a čas vytvoření |
+| `PostId` | `UUID` / `Int` | Foreign Key | Vazba na komentovaný příspěvek |
+| `UserProfileId`| `UUID` / `Int` | Foreign Key | Autor komentáře |
+
+### ❤️ Like (To se mi líbí)
+
+| Atribut | Datový typ | Omezení | Popis |
+| :--- | :--- | :--- | :--- |
+| `Id` | `UUID` / `Int` | Primary Key | Unikátní identifikátor |
+| `CreatedAt` | `DateTime` | Auto-generated| Datum a čas udělení lajku |
+| `PostId` | `UUID` / `Int` | Foreign Key | Vazba na lajkovaný příspěvek |
+| `UserProfileId`| `UUID` / `Int` | Foreign Key | Kdo dal lajk |
+
+### 🤝 Follow (Sledování)
+
+| Atribut | Datový typ | Omezení | Popis |
+| :--- | :--- | :--- | :--- |
+| `Id` | `UUID` / `Int` | Primary Key | Unikátní identifikátor |
+| `SenderId` | `UUID` / `Int` | Foreign Key | Sledující uživatel (Kdo začal sledovat) |
+| `ReceiverId` | `UUID` / `Int` | Foreign Key | Sledovaný uživatel (Kdo je sledován) |
+| `CreatedAt` | `DateTime` | Auto-generated| Datum a čas začátku sledování |
 
 ## Technické detaily
 
@@ -89,7 +133,7 @@ Před spuštěním aplikace se ujistěte, že máte nainstalované požadované 
 
 ---
 
-### ⚙️ 1. Konfigurace a příprava databáze
+### ⚙️ Konfigurace a příprava databáze
 
 1. Otevřete soubor `appsettings.json` ve spouštěcím webovém projektu (např. `SocialSite.Web` nebo `SocialSite.API`).
 2. Zkontrolujte nebo upravte **Connection String** na vaši databázi:
@@ -106,6 +150,14 @@ Před spuštěním aplikace se ujistěte, že máte nainstalované požadované 
    *(Cesty k projektům přizpůsobte podle přesného názvu vašich vrstev v solution).*
 
 ---
+
+### 🔨 První spuštění
+    Jakmile dojde ke stažení zip souboru z gitu, nebo clone repozitáře. Jako první je za potřebí spustit následující command do konzole z výchozí složky:
+    ```bash
+    cd SocialSite.Web
+    ```
+    odtud pokračujte na spuštění aplikace
+
 
 ### 💻 Způsoby spuštění
 
