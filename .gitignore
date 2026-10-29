@@ -1,0 +1,16 @@
+# Build výstupy
+bin/
+obj/
+
+# Visual Studio / Rider / VS Code
+.vs/
+.idea/
+.vscode/
+*.user
+*.suo
+
+# Lokální nastavení Claude Code
+.claude/settings.local.json
+
+# Nahrané soubory uživatelů
+SocialSite.Web/wwwroot/uploads/

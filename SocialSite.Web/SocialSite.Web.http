@@ -1,0 +1,13 @@
+@SocialSite.Web_HostAddress = http://localhost:5178
+
+#if (EnableOpenAPI)
+GET {{SocialSite.Web_HostAddress}}/openapi/v1.json
+Accept: application/json
+
+###
+#endif
+
+GET {{SocialSite.Web_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
