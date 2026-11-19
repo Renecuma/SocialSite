@@ -1,0 +1,35 @@
+@model IReadOnlyList<PostDto>
+@{
+    ViewData["Title"] = "Příspěvky";
+}
+
+<section class="container page">
+    <h2>Příspěvky</h2>
+    <partial name="_AdminNav" />
+
+    <div class="table-wrap">
+        <table class="table">
+            <thead>
+                <tr><th>Autor</th><th>Obsah</th><th>Vytvořeno</th><th>♥</th><th></th></tr>
+            </thead>
+            <tbody>
+                @foreach (var post in Model)
+                {
+                    <tr>
+                        <td>@post.AuthorName</td>
+                        <td class="cell-text">@post.Content</td>
+                        <td>@post.CreatedAt.ToLocalTime().ToString("d. M. yyyy H:mm")</td>
+                        <td>@post.LikeCount</td>
+                        <td class="table-actions">
+                            <a asp-action="Edit" asp-route-id="@post.Id" class="btn btn-sm btn-ghost">Upravit</a>
+                            <form asp-action="Delete" asp-route-id="@post.Id" method="post" class="inline-form"
+                                  onsubmit="return confirm('Opravdu smazat příspěvek?');">
+                                <button type="submit" class="btn btn-sm btn-danger">Smazat</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</section>

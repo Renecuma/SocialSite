@@ -2,6 +2,9 @@ namespace SocialSite.Core.Entities;
 
 public class UserProfile : BaseEntity
 {
+    // Vazba na účet v ASP.NET Identity (AspNetUsers.Id)
+    public string UserId { get; set; } = string.Empty;
+
     public string Name { get; set; } = string.Empty;
     public DateOnly DateOfBirth { get; set; }
     public string? Bio { get; set; }

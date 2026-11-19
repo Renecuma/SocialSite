@@ -1,0 +1,18 @@
+@{
+    var current = ViewContext.RouteData.Values["controller"]?.ToString();
+    string Active(string c) => current == c ? "btn-primary" : "btn-ghost";
+}
+
+<nav class="admin-nav">
+    @if (User.IsInRole(Roles.Admin))
+    {
+        <a asp-area="Admin" asp-controller="Users" asp-action="Index" class="btn btn-sm @Active("Users")">Uživatelé</a>
+    }
+    <a asp-area="Admin" asp-controller="Posts" asp-action="Index" class="btn btn-sm @Active("Posts")">Příspěvky</a>
+    <a asp-area="Admin" asp-controller="Comments" asp-action="Index" class="btn btn-sm @Active("Comments")">Komentáře</a>
+    @if (User.IsInRole(Roles.Admin))
+    {
+        <a asp-area="Admin" asp-controller="Likes" asp-action="Index" class="btn btn-sm @Active("Likes")">Lajky</a>
+        <a asp-area="Admin" asp-controller="Follows" asp-action="Index" class="btn btn-sm @Active("Follows")">Sledování</a>
+    }
+</nav>

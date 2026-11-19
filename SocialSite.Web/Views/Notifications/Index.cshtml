@@ -1,0 +1,32 @@
+@model IReadOnlyList<NotificationDto>
+@{
+    ViewData["Title"] = "Oznámení";
+}
+
+<section class="container page">
+    <h2>Oznámení</h2>
+
+    <div class="item-list">
+        @if (Model.Count == 0)
+        {
+            <p class="muted">Zatím žádná oznámení.</p>
+        }
+        @foreach (var n in Model)
+        {
+            <div class="item-row">
+                <div>
+                    <a asp-controller="Profile" asp-action="Index" asp-route-id="@n.ActorId" class="post-author">@n.ActorName</a>
+                    @if (n.PostId is not null)
+                    {
+                        <a asp-controller="Posts" asp-action="Details" asp-route-id="@n.PostId">@n.Message</a>
+                    }
+                    else
+                    {
+                        @n.Message
+                    }
+                </div>
+                <span class="muted">@n.CreatedAt.ToLocalTime().ToString("d. M. H:mm")</span>
+            </div>
+        }
+    </div>
+</section>

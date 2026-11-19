@@ -1,0 +1,37 @@
+@model PostDto
+
+<article class="card post">
+    <header class="post-header">
+        <a asp-area="" asp-controller="Profile" asp-action="Index" asp-route-id="@Model.AuthorId" class="post-author">@Model.AuthorName</a>
+        <span class="muted">
+            @Model.CreatedAt.ToLocalTime().ToString("d. M. yyyy H:mm")
+            @if (Model.UpdatedAt is not null) { <text>(upraveno)</text> }
+        </span>
+    </header>
+
+    <p class="post-content">@Model.Content</p>
+
+    <footer class="post-actions">
+        @if (User.Identity?.IsAuthenticated == true)
+        {
+            <form asp-area="" asp-controller="Posts" asp-action="Like" asp-route-id="@Model.Id" method="post" class="inline-form">
+                <input type="hidden" name="returnUrl" value="@(Context.Request.Path + Context.Request.QueryString)" />
+                <button type="submit" class="btn btn-sm @(Model.LikedByMe ? "btn-primary" : "btn-ghost")">♥ @Model.LikeCount</button>
+            </form>
+        }
+        else
+        {
+            <span class="muted">♥ @Model.LikeCount</span>
+        }
+        <a asp-area="" asp-controller="Posts" asp-action="Details" asp-route-id="@Model.Id" class="btn btn-sm btn-ghost">Komentáře (@Model.CommentCount)</a>
+
+        @if (Model.IsMine)
+        {
+            <a asp-area="" asp-controller="Posts" asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-sm btn-ghost">Upravit</a>
+            <form asp-area="" asp-controller="Posts" asp-action="Delete" asp-route-id="@Model.Id" method="post" class="inline-form"
+                  onsubmit="return confirm('Opravdu smazat příspěvek?');">
+                <button type="submit" class="btn btn-sm btn-danger">Smazat</button>
+            </form>
+        }
+    </footer>
+</article>

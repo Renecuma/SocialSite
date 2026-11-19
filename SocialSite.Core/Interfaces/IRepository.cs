@@ -10,9 +10,14 @@ public interface IRepository<T> where T : BaseEntity
     Task<IReadOnlyList<T>> FindAsync(Expression<Func<T, bool>> predicate, CancellationToken ct = default);
     Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate, CancellationToken ct = default);
 
+    // Varianty s načtením navázaných entit, např. "UserProfile" nebo "Comments.UserProfile"
+    Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate, string[] includes, CancellationToken ct = default);
+    Task<IReadOnlyList<T>> FindAsync(Expression<Func<T, bool>> predicate, string[] includes, CancellationToken ct = default);
+
     Task AddAsync(T entity, CancellationToken ct = default);
     void Update(T entity);
     void Remove(T entity);
+    void RemoveRange(IEnumerable<T> entities);
 
     Task<int> SaveChangesAsync(CancellationToken ct = default);
 }

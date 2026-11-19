@@ -1,0 +1,32 @@
+@model IReadOnlyList<FollowDto>
+@{
+    ViewData["Title"] = "Sledování";
+}
+
+<section class="container page">
+    <h2>Sledování</h2>
+    <partial name="_AdminNav" />
+
+    <div class="table-wrap">
+        <table class="table">
+            <thead>
+                <tr><th>Kdo sleduje</th><th>Koho</th><th>Od</th><th></th></tr>
+            </thead>
+            <tbody>
+                @foreach (var follow in Model)
+                {
+                    <tr>
+                        <td>@follow.SenderName</td>
+                        <td>@follow.ReceiverName</td>
+                        <td>@follow.CreatedAt.ToLocalTime().ToString("d. M. yyyy H:mm")</td>
+                        <td class="table-actions">
+                            <form asp-action="Delete" asp-route-id="@follow.Id" method="post" class="inline-form">
+                                <button type="submit" class="btn btn-sm btn-danger">Smazat</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</section>

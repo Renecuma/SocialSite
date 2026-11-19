@@ -1,0 +1,35 @@
+@model IReadOnlyList<CommentDto>
+@{
+    ViewData["Title"] = "Komentáře";
+}
+
+<section class="container page">
+    <h2>Komentáře</h2>
+    <partial name="_AdminNav" />
+
+    <div class="table-wrap">
+        <table class="table">
+            <thead>
+                <tr><th>Autor</th><th>Text</th><th>Příspěvek</th><th>Vytvořeno</th><th></th></tr>
+            </thead>
+            <tbody>
+                @foreach (var comment in Model)
+                {
+                    <tr>
+                        <td>@comment.AuthorName</td>
+                        <td class="cell-text">@comment.Text</td>
+                        <td><a asp-area="" asp-controller="Posts" asp-action="Details" asp-route-id="@comment.PostId">#@comment.PostId</a></td>
+                        <td>@comment.CreatedAt.ToLocalTime().ToString("d. M. yyyy H:mm")</td>
+                        <td class="table-actions">
+                            <a asp-action="Edit" asp-route-id="@comment.Id" class="btn btn-sm btn-ghost">Upravit</a>
+                            <form asp-action="Delete" asp-route-id="@comment.Id" method="post" class="inline-form"
+                                  onsubmit="return confirm('Opravdu smazat komentář?');">
+                                <button type="submit" class="btn btn-sm btn-danger">Smazat</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</section>

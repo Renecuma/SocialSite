@@ -1,0 +1,43 @@
+@model UserEditDto
+@{
+    ViewData["Title"] = "Upravit uživatele";
+}
+
+<section class="container page">
+    <h2>Upravit uživatele</h2>
+    <partial name="_AdminNav" />
+
+    <article class="card">
+        <form asp-action="Edit" method="post">
+            <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="Email"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="field-error"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Name"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="field-error"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DateOfBirth"></label>
+                <input asp-for="DateOfBirth" type="date" class="form-control" />
+                <span asp-validation-for="DateOfBirth" class="field-error"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Bio"></label>
+                <textarea asp-for="Bio" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Bio" class="field-error"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Role"></label>
+                <select asp-for="Role" asp-items="@(new SelectList(Roles.All))" class="form-control"></select>
+                <span asp-validation-for="Role" class="field-error"></span>
+            </div>
+            <button type="submit" class="btn btn-primary">Uložit</button>
+            <a asp-action="Index" class="btn btn-ghost">Zpět</a>
+        </form>
+    </article>
+</section>

@@ -29,6 +29,12 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
     public virtual Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate, CancellationToken ct = default)
         => DbSet.AnyAsync(predicate, ct);
 
+    public virtual Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate, string[] includes, CancellationToken ct = default)
+        => WithIncludes(includes).AsNoTracking().FirstOrDefaultAsync(predicate, ct);
+
+    public virtual async Task<IReadOnlyList<T>> FindAsync(Expression<Func<T, bool>> predicate, string[] includes, CancellationToken ct = default)
+        => await WithIncludes(includes).AsNoTracking().Where(predicate).ToListAsync(ct);
+
     public virtual async Task AddAsync(T entity, CancellationToken ct = default)
         => await DbSet.AddAsync(entity, ct);
 
@@ -36,6 +42,16 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
 
     public virtual void Remove(T entity) => DbSet.Remove(entity);
 
+    public virtual void RemoveRange(IEnumerable<T> entities) => DbSet.RemoveRange(entities);
+
     public Task<int> SaveChangesAsync(CancellationToken ct = default)
         => Context.SaveChangesAsync(ct);
+
+    private IQueryable<T> WithIncludes(string[] includes)
+    {
+        IQueryable<T> query = DbSet;
+        foreach (var include in includes)
+            query = query.Include(include);
+        return query;
+    }
 }

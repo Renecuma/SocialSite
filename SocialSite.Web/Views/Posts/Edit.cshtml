@@ -1,0 +1,20 @@
+@model PostInputDto
+@{
+    ViewData["Title"] = "Upravit příspěvek";
+}
+
+<section class="container page">
+    <article class="card">
+        <h2>Upravit příspěvek</h2>
+        <form asp-action="Edit" asp-route-id="@ViewData["PostId"]" method="post">
+            <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+            <div class="form-group">
+                <label asp-for="Content"></label>
+                <textarea asp-for="Content" class="form-control" rows="5"></textarea>
+                <span asp-validation-for="Content" class="field-error"></span>
+            </div>
+            <button type="submit" class="btn btn-primary">Uložit změny</button>
+            <a asp-action="Details" asp-route-id="@ViewData["PostId"]" class="btn btn-ghost">Zpět</a>
+        </form>
+    </article>
+</section>

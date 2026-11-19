@@ -1,0 +1,23 @@
+@model CommentInputDto
+@{
+    ViewData["Title"] = "Upravit komentář";
+}
+
+<section class="container page">
+    <h2>Upravit komentář</h2>
+    <partial name="_AdminNav" />
+
+    <article class="card">
+        <form asp-action="Edit" asp-route-id="@ViewData["CommentId"]" method="post">
+            <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+            <input type="hidden" asp-for="PostId" />
+            <div class="form-group">
+                <label asp-for="Text"></label>
+                <textarea asp-for="Text" class="form-control" rows="4"></textarea>
+                <span asp-validation-for="Text" class="field-error"></span>
+            </div>
+            <button type="submit" class="btn btn-primary">Uložit</button>
+            <a asp-action="Index" class="btn btn-ghost">Zpět</a>
+        </form>
+    </article>
+</section>

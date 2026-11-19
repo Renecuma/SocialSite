@@ -1,0 +1,43 @@
+@model ProfileDto
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<section class="container page">
+    <article class="card">
+        <h2>@Model.Name</h2>
+        <p>
+            <strong>@Model.FollowersCount</strong> sledujících •
+            <strong>@Model.FollowingCount</strong> sleduje
+        </p>
+        @if (!string.IsNullOrEmpty(Model.Bio))
+        {
+            <p class="profile-bio">@Model.Bio</p>
+        }
+
+        <div class="post-actions">
+            @if (Model.IsMe)
+            {
+                <a asp-action="Edit" class="btn btn-ghost">Upravit profil</a>
+            }
+            else
+            {
+                <form asp-action="Follow" asp-route-id="@Model.Id" method="post" class="inline-form">
+                    <button type="submit" class="btn @(Model.IsFollowedByMe ? "btn-ghost" : "btn-primary")">
+                        @(Model.IsFollowedByMe ? "Přestat sledovat" : "Sledovat")
+                    </button>
+                </form>
+            }
+        </div>
+    </article>
+
+    <h3>@(Model.IsMe ? "Moje příspěvky" : "Příspěvky")</h3>
+    @if (Model.Posts.Count == 0)
+    {
+        <p class="muted">Žádné příspěvky.</p>
+    }
+    @foreach (var post in Model.Posts)
+    {
+        <partial name="_PostCard" model="post" />
+    }
+</section>

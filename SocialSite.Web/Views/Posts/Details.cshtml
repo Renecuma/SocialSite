@@ -1,0 +1,47 @@
+@model PostDetailViewModel
+@{
+    ViewData["Title"] = "Příspěvek";
+}
+
+<section class="container page">
+    <partial name="_PostCard" model="Model.Post" />
+
+    <h3>Komentáře</h3>
+    <div class="item-list">
+        @if (Model.Post.Comments.Count == 0)
+        {
+            <p class="muted">Zatím žádné komentáře.</p>
+        }
+        @foreach (var comment in Model.Post.Comments)
+        {
+            <div class="item-row">
+                <div>
+                    <a asp-controller="Profile" asp-action="Index" asp-route-id="@comment.AuthorId" class="post-author">@comment.AuthorName</a>
+                    <span class="muted">@comment.CreatedAt.ToLocalTime().ToString("d. M. yyyy H:mm")</span>
+                    <p class="comment-text">@comment.Text</p>
+                </div>
+                @if (comment.IsMine)
+                {
+                    <form asp-action="DeleteComment" asp-route-id="@comment.Id" method="post" class="inline-form">
+                        <button type="submit" class="btn btn-sm btn-danger">Smazat</button>
+                    </form>
+                }
+            </div>
+        }
+    </div>
+
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+        <article class="card comment-form">
+            <form asp-action="Comment" method="post">
+                <input type="hidden" asp-for="NewComment.PostId" />
+                <div class="form-group">
+                    <label asp-for="NewComment.Text"></label>
+                    <textarea asp-for="NewComment.Text" class="form-control" rows="3" placeholder="Napište komentář…"></textarea>
+                    <span asp-validation-for="NewComment.Text" class="field-error"></span>
+                </div>
+                <button type="submit" class="btn btn-primary">Odeslat</button>
+            </form>
+        </article>
+    }
+</section>

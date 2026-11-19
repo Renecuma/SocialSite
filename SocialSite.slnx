@@ -1,4 +1,5 @@
 <Solution>
+  <Project Path="SocialSite.Application/SocialSite.Application.csproj" />
   <Project Path="SocialSite.Core/SocialSite.Core.csproj" />
   <Project Path="SocialSite.Infrastructure/SocialSite.Infrastructure.csproj" />
   <Project Path="SocialSite.Web/SocialSite.Web.csproj" />

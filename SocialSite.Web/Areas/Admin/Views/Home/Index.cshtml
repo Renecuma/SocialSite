@@ -1,0 +1,21 @@
+@{
+    ViewData["Title"] = "Správa";
+}
+
+<section class="container page">
+    <h2>Správa</h2>
+    <partial name="_AdminNav" />
+
+    <article class="card">
+        <p>
+            @if (User.IsInRole(Roles.Admin))
+            {
+                <text>Jako administrátor můžete spravovat uživatele, role i veškerý obsah.</text>
+            }
+            else
+            {
+                <text>Jako manažer můžete moderovat příspěvky a komentáře.</text>
+            }
+        </p>
+    </article>
+</section>

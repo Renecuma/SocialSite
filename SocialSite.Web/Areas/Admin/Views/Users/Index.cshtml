@@ -1,0 +1,39 @@
+@model IReadOnlyList<UserDto>
+@{
+    ViewData["Title"] = "Uživatelé";
+}
+
+<section class="container page">
+    <h2>Uživatelé</h2>
+    <partial name="_AdminNav" />
+
+    @if (TempData["Error"] is string error)
+    {
+        <div class="alert alert-error">@error</div>
+    }
+
+    <div class="table-wrap">
+        <table class="table">
+            <thead>
+                <tr><th>E-mail</th><th>Jméno</th><th>Role</th><th></th></tr>
+            </thead>
+            <tbody>
+                @foreach (var user in Model)
+                {
+                    <tr>
+                        <td>@user.Email</td>
+                        <td>@user.Name</td>
+                        <td>@user.Role</td>
+                        <td class="table-actions">
+                            <a asp-action="Edit" asp-route-id="@user.Id" class="btn btn-sm btn-ghost">Upravit</a>
+                            <form asp-action="Delete" asp-route-id="@user.Id" method="post" class="inline-form"
+                                  onsubmit="return confirm('Opravdu smazat uživatele i s jeho obsahem?');">
+                                <button type="submit" class="btn btn-sm btn-danger">Smazat</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</section>

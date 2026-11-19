@@ -10,6 +10,7 @@ Jednoduchá sociální síť: uživatelé sdílejí příspěvky, komentují, la
 |------|-------|
 | **Návštěvník** | Nepřihlášený uživatel |
 | **User** | Registrovaný uživatel |
+| **Manager** | Moderuje obsah (příspěvky, komentáře), nespravuje uživatele ani role |
 | **Admin** | Správce aplikace |
 
 ### Co kdo může
@@ -26,7 +27,18 @@ Jednoduchá sociální síť: uživatelé sdílejí příspěvky, komentují, la
 | Přehled všech uživatelů, blokování a mazání účtů | – | – | ✅ |
 | Upravovat a mazat jakékoli příspěvky a komentáře | – | – | ✅ |
 
-> Admin nemůže měnit hash hesla uživatele.
+> Admin nemůže měnit hash hesla uživatele. Správa je v Area `Admin` (`/Admin`).
+
+Výchozí admin účet se vytvoří při startu (nastavení v `appsettings.json`, sekce `Admin`): `admin@socialsite.cz` / `Admin123`.
+
+### Vrstvy
+
+| Vrstva | Projekt |
+|------|-------|
+| Domain | `SocialSite.Core` – entity, `IRepository<T>` |
+| Application | `SocialSite.Application` – služby, DTO, validační atribut `MinimumAge` |
+| Infrastructure | `SocialSite.Infrastructure` – EF Core, migrace, repozitář, Identity |
+| Presentation | `SocialSite.Web` – ASP.NET Core MVC (Controllers, Views, Area Admin) |
 
 ## 🗄️ Datový model
 

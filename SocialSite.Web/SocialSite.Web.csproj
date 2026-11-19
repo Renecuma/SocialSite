@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.14" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.14">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
@@ -16,7 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SocialSite.Infrastructure\SocialSite.Infrastructure.csproj" />
-    <ProjectReference Include="..\SocialSite.Core\SocialSite.Core.csproj" />
+    <ProjectReference Include="..\SocialSite.Application\SocialSite.Application.csproj" />
   </ItemGroup>
 
 </Project>
