@@ -15,6 +15,17 @@
                 <textarea asp-for="Content" class="form-control" rows="5"></textarea>
                 <span asp-validation-for="Content" class="field-error"></span>
             </div>
+            <input type="hidden" asp-for="ImagePath" />
+            @if (Model.ImagePath is not null)
+            {
+                <div class="form-group">
+                    <img src="@Model.ImagePath" alt="Obrázek příspěvku" class="post-image-preview" />
+                    <div class="form-check">
+                        <input asp-for="RemoveImage" type="checkbox" />
+                        <label asp-for="RemoveImage"></label>
+                    </div>
+                </div>
+            }
             <button type="submit" class="btn btn-primary">Uložit</button>
             <a asp-action="Index" class="btn btn-ghost">Zpět</a>
         </form>

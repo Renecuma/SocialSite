@@ -10,6 +10,7 @@ internal static class PostMapper
     {
         Id = post.Id,
         Content = post.Content,
+        ImagePath = post.ImagePath,
         CreatedAt = post.CreatedAt,
         UpdatedAt = post.UpdatedAt,
         AuthorId = post.UserProfileId,

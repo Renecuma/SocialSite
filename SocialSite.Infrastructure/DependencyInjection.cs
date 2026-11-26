@@ -7,6 +7,7 @@ using SocialSite.Core.Interfaces;
 using SocialSite.Infrastructure.Data;
 using SocialSite.Infrastructure.Identity;
 using SocialSite.Infrastructure.Repositories;
+using SocialSite.Infrastructure.Storage;
 
 namespace SocialSite.Infrastructure;
 
@@ -36,6 +37,7 @@ public static class DependencyInjection
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
         services.AddScoped<IAccountService, AccountService>();
         services.AddScoped<IUserAdminService, UserAdminService>();
+        services.AddSingleton<IImageStorage, LocalImageStorage>();
 
         return services;
     }

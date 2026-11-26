@@ -12,11 +12,13 @@ public class PostService : IPostService
 
     private readonly IRepository<Post> _posts;
     private readonly IRepository<UserProfile> _profiles;
+    private readonly IImageStorage _images;
 
-    public PostService(IRepository<Post> posts, IRepository<UserProfile> profiles)
+    public PostService(IRepository<Post> posts, IRepository<UserProfile> profiles, IImageStorage images)
     {
         _posts = posts;
         _profiles = profiles;
+        _images = images;
     }
 
     public async Task<IReadOnlyList<PostDto>> GetFeedAsync(string? currentUserId)
@@ -48,29 +50,42 @@ public class PostService : IPostService
     public async Task<PostInputDto?> GetForEditAsync(int id, string? ownerUserId)
     {
         var post = await GetAuthorizedAsync(id, ownerUserId);
-        return post is null ? null : new PostInputDto { Content = post.Content };
+        return post is null ? null : new PostInputDto { Content = post.Content, ImagePath = post.ImagePath };
     }
 
-    public async Task<int> CreateAsync(PostInputDto input, string userId)
+    public async Task<int> CreateAsync(PostInputDto input, ImageUpload? image, string userId)
     {
         var profileId = await _profiles.GetIdByUserIdAsync(userId)
             ?? throw new InvalidOperationException("Uživatel nemá profil.");
 
         var post = new Post { Content = input.Content.Trim(), UserProfileId = profileId };
+        if (image is not null)
+            post.ImagePath = await _images.SaveAsync(image.Content, image.Extension);
+
         await _posts.AddAsync(post);
         await _posts.SaveChangesAsync();
         return post.Id;
     }
 
-    public async Task<bool> UpdateAsync(int id, PostInputDto input, string? ownerUserId)
+    public async Task<bool> UpdateAsync(int id, PostInputDto input, ImageUpload? image, string? ownerUserId)
     {
         var post = await GetAuthorizedAsync(id, ownerUserId);
         if (post is null) return false;
+
+        // Nový obrázek nahradí starý; starý soubor se smaže až po uložení změn
+        var oldImage = post.ImagePath;
+        if (image is not null)
+            post.ImagePath = await _images.SaveAsync(image.Content, image.Extension);
+        else if (input.RemoveImage)
+            post.ImagePath = null;
 
         post.Content = input.Content.Trim();
         post.UpdatedAt = DateTime.UtcNow;
         _posts.Update(post);
         await _posts.SaveChangesAsync();
+
+        if (oldImage != post.ImagePath)
+            _images.Delete(oldImage);
         return true;
     }
 
@@ -81,6 +96,7 @@ public class PostService : IPostService
 
         _posts.Remove(post);
         await _posts.SaveChangesAsync();
+        _images.Delete(post.ImagePath);
         return true;
     }
 

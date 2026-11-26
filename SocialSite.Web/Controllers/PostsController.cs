@@ -35,12 +35,13 @@ public class PostsController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create(PostInputDto input)
+    public async Task<IActionResult> Create(PostInputDto input, IFormFile? image)
     {
+        var upload = image.ToImageUpload(ModelState);
         if (!ModelState.IsValid)
             return View(input);
 
-        var id = await _postService.CreateAsync(input, User.GetUserId()!);
+        var id = await _postService.CreateAsync(input, upload, User.GetUserId()!);
         return RedirectToAction(nameof(Details), new { id });
     }
 
@@ -56,15 +57,16 @@ public class PostsController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int id, PostInputDto input)
+    public async Task<IActionResult> Edit(int id, PostInputDto input, IFormFile? image)
     {
+        var upload = image.ToImageUpload(ModelState);
         if (!ModelState.IsValid)
         {
             ViewData["PostId"] = id;
             return View(input);
         }
 
-        if (!await _postService.UpdateAsync(id, input, User.GetUserId()))
+        if (!await _postService.UpdateAsync(id, input, upload, User.GetUserId()))
             return NotFound();
 
         return RedirectToAction(nameof(Details), new { id });

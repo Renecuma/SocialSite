@@ -17,7 +17,7 @@
                 {
                     <tr>
                         <td>@post.AuthorName</td>
-                        <td class="cell-text">@post.Content</td>
+                        <td class="cell-text">@if (post.ImagePath is not null) { <text>🖼 </text> }@post.Content</td>
                         <td>@post.CreatedAt.ToLocalTime().ToString("d. M. yyyy H:mm")</td>
                         <td>@post.LikeCount</td>
                         <td class="table-actions">

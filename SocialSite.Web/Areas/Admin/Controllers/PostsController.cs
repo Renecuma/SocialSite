@@ -41,7 +41,7 @@ public class PostsController : Controller
             return View(input);
         }
 
-        if (!await _postService.UpdateAsync(id, input, ownerUserId: null))
+        if (!await _postService.UpdateAsync(id, input, image: null, ownerUserId: null))
             return NotFound();
 
         return RedirectToAction(nameof(Index));

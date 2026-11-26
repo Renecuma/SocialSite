@@ -11,6 +11,13 @@
 
     <p class="post-content">@Model.Content</p>
 
+    @if (Model.ImagePath is not null)
+    {
+        <a href="@Model.ImagePath" target="_blank" class="post-image-link">
+            <img src="@Model.ImagePath" alt="Obrázek k příspěvku" class="post-image" loading="lazy" />
+        </a>
+    }
+
     <footer class="post-actions">
         @if (User.Identity?.IsAuthenticated == true)
         {

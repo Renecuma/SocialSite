@@ -15,15 +15,20 @@ public class UserAdminService : IUserAdminService
     private readonly IRepository<Comment> _comments;
     private readonly IRepository<Like> _likes;
     private readonly IRepository<Follow> _follows;
+    private readonly IRepository<Post> _posts;
+    private readonly IImageStorage _images;
 
     public UserAdminService(UserManager<IdentityUser> userManager, IRepository<UserProfile> profiles,
-        IRepository<Comment> comments, IRepository<Like> likes, IRepository<Follow> follows)
+        IRepository<Comment> comments, IRepository<Like> likes, IRepository<Follow> follows,
+        IRepository<Post> posts, IImageStorage images)
     {
         _userManager = userManager;
         _profiles = profiles;
         _comments = comments;
         _likes = likes;
         _follows = follows;
+        _posts = posts;
+        _images = images;
     }
 
     public async Task<IReadOnlyList<UserDto>> GetAllAsync()
@@ -110,17 +115,22 @@ public class UserAdminService : IUserAdminService
         // Komentáře, lajky a sledování mají Restrict, proto je smažeme ručně.
         // Profil a jeho příspěvky se smažou kaskádově spolu s účtem.
         var profile = (await _profiles.FindAsync(p => p.UserId == id)).FirstOrDefault();
+        var imagePaths = new List<string?>();
         if (profile is not null)
         {
             _comments.RemoveRange(await _comments.FindAsync(c => c.UserProfileId == profile.Id));
             _likes.RemoveRange(await _likes.FindAsync(l => l.UserProfileId == profile.Id));
             _follows.RemoveRange(await _follows.FindAsync(f => f.SenderId == profile.Id || f.ReceiverId == profile.Id));
             await _profiles.SaveChangesAsync();
+            imagePaths.AddRange((await _posts.FindAsync(p => p.UserProfileId == profile.Id)).Select(p => p.ImagePath));
         }
 
         var result = await _userManager.DeleteAsync(user);
-        return result.Succeeded
-            ? OperationResult.Success()
-            : OperationResult.Failure(result.Errors.Select(e => e.Description));
+        if (!result.Succeeded)
+            return OperationResult.Failure(result.Errors.Select(e => e.Description));
+
+        // Příspěvky zmizely kaskádově, soubory obrázků je třeba smazat ručně
+        imagePaths.ForEach(_images.Delete);
+        return OperationResult.Success();
     }
 }
