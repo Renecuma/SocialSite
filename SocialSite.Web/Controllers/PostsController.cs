@@ -92,8 +92,10 @@ public class PostsController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Comment([Bind(Prefix = nameof(PostDetailViewModel.NewComment))] CommentInputDto input)
+    public async Task<IActionResult> Comment([Bind(Prefix = nameof(PostDetailViewModel.NewComment))] CommentInputDto input,
+        IFormFile? image)
     {
+        var upload = image.ToImageUpload(ModelState);
         if (!ModelState.IsValid)
         {
             var post = await _postService.GetDetailAsync(input.PostId, User.GetUserId());
@@ -101,7 +103,7 @@ public class PostsController : Controller
             return View(nameof(Details), new PostDetailViewModel { Post = post, NewComment = input });
         }
 
-        if (!await _commentService.AddAsync(input, User.GetUserId()!))
+        if (!await _commentService.AddAsync(input, upload, User.GetUserId()!))
             return NotFound();
 
         return RedirectToAction(nameof(Details), new { id = input.PostId });

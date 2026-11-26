@@ -19,6 +19,12 @@
                     <a asp-controller="Profile" asp-action="Index" asp-route-id="@comment.AuthorId" class="post-author">@comment.AuthorName</a>
                     <span class="muted">@comment.CreatedAt.ToLocalTime().ToString("d. M. yyyy H:mm")</span>
                     <p class="comment-text">@comment.Text</p>
+                    @if (comment.ImagePath is not null)
+                    {
+                        <a href="@comment.ImagePath" target="_blank" class="post-image-link">
+                            <img src="@comment.ImagePath" alt="Obrázek ke komentáři" class="comment-image" loading="lazy" />
+                        </a>
+                    }
                 </div>
                 @if (comment.IsMine)
                 {
@@ -33,12 +39,17 @@
     @if (User.Identity?.IsAuthenticated == true)
     {
         <article class="card comment-form">
-            <form asp-action="Comment" method="post">
+            <form asp-action="Comment" method="post" enctype="multipart/form-data">
                 <input type="hidden" asp-for="NewComment.PostId" />
                 <div class="form-group">
                     <label asp-for="NewComment.Text"></label>
                     <textarea asp-for="NewComment.Text" class="form-control" rows="3" placeholder="Napište komentář…"></textarea>
                     <span asp-validation-for="NewComment.Text" class="field-error"></span>
+                </div>
+                <div class="form-group">
+                    <label for="image">Obrázek (nepovinné)</label>
+                    <input type="file" id="image" name="image" class="form-control" accept=".jpg,.jpeg,.png,.gif,.webp" />
+                    @Html.ValidationMessage("Image", new { @class = "field-error" })
                 </div>
                 <button type="submit" class="btn btn-primary">Odeslat</button>
             </form>

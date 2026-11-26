@@ -118,7 +118,11 @@ public class UserAdminService : IUserAdminService
         var imagePaths = new List<string?>();
         if (profile is not null)
         {
-            _comments.RemoveRange(await _comments.FindAsync(c => c.UserProfileId == profile.Id));
+            var ownComments = await _comments.FindAsync(c => c.UserProfileId == profile.Id);
+            var commentsOnPosts = await _comments.FindAsync(c => c.Post.UserProfileId == profile.Id);
+            imagePaths.AddRange(ownComments.Concat(commentsOnPosts).Select(c => c.ImagePath));
+
+            _comments.RemoveRange(ownComments);
             _likes.RemoveRange(await _likes.FindAsync(l => l.UserProfileId == profile.Id));
             _follows.RemoveRange(await _follows.FindAsync(f => f.SenderId == profile.Id || f.ReceiverId == profile.Id));
             await _profiles.SaveChangesAsync();
@@ -129,7 +133,7 @@ public class UserAdminService : IUserAdminService
         if (!result.Succeeded)
             return OperationResult.Failure(result.Errors.Select(e => e.Description));
 
-        // Příspěvky zmizely kaskádově, soubory obrázků je třeba smazat ručně
+        // Příspěvky (i komentáře pod nimi) zmizely kaskádově, soubory obrázků je třeba smazat ručně
         imagePaths.ForEach(_images.Delete);
         return OperationResult.Success();
     }

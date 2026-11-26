@@ -17,7 +17,7 @@
                 {
                     <tr>
                         <td>@comment.AuthorName</td>
-                        <td class="cell-text">@comment.Text</td>
+                        <td class="cell-text">@if (comment.ImagePath is not null) { <text>🖼 </text> }@comment.Text</td>
                         <td><a asp-area="" asp-controller="Posts" asp-action="Details" asp-route-id="@comment.PostId">#@comment.PostId</a></td>
                         <td>@comment.CreatedAt.ToLocalTime().ToString("d. M. yyyy H:mm")</td>
                         <td class="table-actions">

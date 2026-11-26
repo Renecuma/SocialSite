@@ -25,6 +25,7 @@ internal static class PostMapper
     {
         Id = comment.Id,
         Text = comment.Text,
+        ImagePath = comment.ImagePath,
         CreatedAt = comment.CreatedAt,
         PostId = comment.PostId,
         AuthorId = comment.UserProfileId,

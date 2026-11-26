@@ -6,6 +6,7 @@ public class CommentDto
 {
     public int Id { get; set; }
     public string Text { get; set; } = string.Empty;
+    public string? ImagePath { get; set; }
     public DateTime CreatedAt { get; set; }
 
     public int PostId { get; set; }
@@ -22,4 +23,10 @@ public class CommentInputDto
     [StringLength(1000, ErrorMessage = "Komentář může mít maximálně {1} znaků.")]
     [Display(Name = "Komentář")]
     public string Text { get; set; } = string.Empty;
+
+    // Aktuální obrázek (jen pro zobrazení ve formuláři úprav)
+    public string? ImagePath { get; set; }
+
+    [Display(Name = "Odebrat obrázek")]
+    public bool RemoveImage { get; set; }
 }

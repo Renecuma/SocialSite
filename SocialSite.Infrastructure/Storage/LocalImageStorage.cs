@@ -3,7 +3,7 @@ using SocialSite.Application.Interfaces;
 
 namespace SocialSite.Infrastructure.Storage;
 
-// Ukládá obrázky do wwwroot/uploads/posts pod náhodným názvem
+// Ukládá obrázky příspěvků i komentářů do wwwroot/uploads/posts pod náhodným názvem
 public class LocalImageStorage : IImageStorage
 {
     private const string PublicFolder = "/uploads/posts/";

@@ -4,6 +4,7 @@ public class Comment : BaseEntity
 {
     public string Text { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public string? ImagePath { get; set; }
 
     public int PostId { get; set; }
     public Post Post { get; set; } = null!;

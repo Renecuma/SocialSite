@@ -91,21 +91,25 @@ public class PostService : IPostService
 
     public async Task<bool> DeleteAsync(int id, string? ownerUserId)
     {
-        var post = await GetAuthorizedAsync(id, ownerUserId);
-        if (post is null) return false;
+        var post = await _posts.FirstOrDefaultAsync(p => p.Id == id, [nameof(Post.Comments)]);
+        if (post is null || !await IsOwnerAsync(post, ownerUserId)) return false;
 
         _posts.Remove(post);
         await _posts.SaveChangesAsync();
+
+        // Komentáře se smazaly kaskádově, soubory obrázků je třeba smazat ručně
         _images.Delete(post.ImagePath);
+        foreach (var comment in post.Comments)
+            _images.Delete(comment.ImagePath);
         return true;
     }
 
     private async Task<Post?> GetAuthorizedAsync(int id, string? ownerUserId)
     {
         var post = await _posts.GetByIdAsync(id);
-        if (post is null || ownerUserId is null) return post;
-
-        var profileId = await _profiles.GetIdByUserIdAsync(ownerUserId);
-        return post.UserProfileId == profileId ? post : null;
+        return post is not null && await IsOwnerAsync(post, ownerUserId) ? post : null;
     }
+
+    private async Task<bool> IsOwnerAsync(Post post, string? ownerUserId)
+        => ownerUserId is null || post.UserProfileId == await _profiles.GetIdByUserIdAsync(ownerUserId);
 }

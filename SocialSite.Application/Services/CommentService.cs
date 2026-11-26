@@ -11,12 +11,15 @@ public class CommentService : ICommentService
     private readonly IRepository<Comment> _comments;
     private readonly IRepository<Post> _posts;
     private readonly IRepository<UserProfile> _profiles;
+    private readonly IImageStorage _images;
 
-    public CommentService(IRepository<Comment> comments, IRepository<Post> posts, IRepository<UserProfile> profiles)
+    public CommentService(IRepository<Comment> comments, IRepository<Post> posts, IRepository<UserProfile> profiles,
+        IImageStorage images)
     {
         _comments = comments;
         _posts = posts;
         _profiles = profiles;
+        _images = images;
     }
 
     public async Task<IReadOnlyList<CommentDto>> GetAllAsync()
@@ -28,7 +31,7 @@ public class CommentService : ICommentService
             .ToList();
     }
 
-    public async Task<bool> AddAsync(CommentInputDto input, string userId)
+    public async Task<bool> AddAsync(CommentInputDto input, ImageUpload? image, string userId)
     {
         var profileId = await _profiles.GetIdByUserIdAsync(userId);
         if (profileId is null || !await _posts.ExistsAsync(p => p.Id == input.PostId))
@@ -38,7 +41,8 @@ public class CommentService : ICommentService
         {
             PostId = input.PostId,
             UserProfileId = profileId.Value,
-            Text = input.Text.Trim()
+            Text = input.Text.Trim(),
+            ImagePath = image is null ? null : await _images.SaveAsync(image.Content, image.Extension)
         });
         await _comments.SaveChangesAsync();
         return true;
@@ -47,7 +51,7 @@ public class CommentService : ICommentService
     public async Task<CommentInputDto?> GetForEditAsync(int id)
     {
         var comment = await _comments.GetByIdAsync(id);
-        return comment is null ? null : new CommentInputDto { PostId = comment.PostId, Text = comment.Text };
+        return comment is null ? null : new CommentInputDto { PostId = comment.PostId, Text = comment.Text, ImagePath = comment.ImagePath };
     }
 
     public async Task<bool> UpdateAsync(int id, CommentInputDto input)
@@ -55,9 +59,16 @@ public class CommentService : ICommentService
         var comment = await _comments.GetByIdAsync(id);
         if (comment is null) return false;
 
+        var oldImage = comment.ImagePath;
+        if (input.RemoveImage)
+            comment.ImagePath = null;
+
         comment.Text = input.Text.Trim();
         _comments.Update(comment);
         await _comments.SaveChangesAsync();
+
+        if (oldImage != comment.ImagePath)
+            _images.Delete(oldImage);
         return true;
     }
 
@@ -71,6 +82,7 @@ public class CommentService : ICommentService
 
         _comments.Remove(comment);
         await _comments.SaveChangesAsync();
+        _images.Delete(comment.ImagePath);
         return comment.PostId;
     }
 }

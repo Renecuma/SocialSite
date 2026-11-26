@@ -9,6 +9,7 @@ public class CommentConfiguration : IEntityTypeConfiguration<Comment>
     public void Configure(EntityTypeBuilder<Comment> b)
     {
         b.Property(c => c.Text).IsRequired().HasMaxLength(1000);
+        b.Property(c => c.ImagePath).HasMaxLength(260);
 
         b.HasOne(c => c.Post)
          .WithMany(p => p.Comments)
